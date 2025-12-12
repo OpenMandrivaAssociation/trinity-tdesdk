@@ -1,6 +1,6 @@
-#
-# Please submit bugfixes or comments via http://www.trinitydesktop.org/
-#
+%bcond clang 1
+%bcond gamin 1
+%bcond kioslave 1
 
 # BUILD WARNING:
 #  Remove qt-devel and qt3-devel and any kde*-devel on your system !
@@ -11,6 +11,8 @@
 %if "%{?tde_version}" == ""
 %define tde_version 14.1.5
 %endif
+%define pkg_rel 2
+
 %define tde_pkg tdesdk
 %define tde_prefix /opt/trinity
 %define tde_bindir %{tde_prefix}/bin
@@ -24,31 +26,24 @@
 %define tde_tdeincludedir %{tde_includedir}/tde
 %define tde_tdelibdir %{tde_libdir}/trinity
 
-%if 0%{?mdkversion}
 %undefine __brp_remove_la_files
 %define dont_remove_libtool_files 1
 %define _disable_rebuild_configure 1
-%endif
 
 # fixes error: Empty %files file …/debugsourcefiles.list
 %define _debugsource_template %{nil}
 
 %define tarball_name %{tde_pkg}-trinity
-%global toolchain %(readlink /usr/bin/cc)
 
 
 Name:			trinity-%{tde_pkg}
 Summary:		The Trinity Software Development Kit (SDK)
 Group:			Development/Tools/Other
 Version:		%{tde_version}
-Release:		%{?!preversion:1}%{?preversion:0_%{preversion}}%{?dist}
+Release:		%{?!preversion:%{pkg_rel}}%{?preversion:0_%{preversion}}%{?dist}
 URL:			http://www.trinitydesktop.org/
 
-%if 0%{?suse_version}
-License:		GPL-2.0+
-%else
 License:		GPLv2+
-%endif
 
 #Vendor:		Trinity Desktop
 #Packager:		Francois Andriot <francois.andriot@free.fr>
@@ -58,136 +53,75 @@ Prefix:			%{tde_prefix}
 Source0:		https://mirror.ppa.trinitydesktop.org/trinity/releases/R%{tde_version}/main/core/%{tarball_name}-%{version}%{?preversion:~%{preversion}}.tar.xz
 Source1:		%{name}-rpmlintrc
 
-BuildRequires:  cmake make
+BuildSystem:    cmake
+BuildOption:    -DCMAKE_BUILD_TYPE="RelWithDebInfo"
+BuildOption:    -DCMAKE_SKIP_RPATH=OFF
+BuildOption:    -DCMAKE_SKIP_INSTALL_RPATH=OFF
+BuildOption:    -DCMAKE_BUILD_WITH_INSTALL_RPATH=ON
+BuildOption:    -DCMAKE_NO_BUILTIN_CHRPATH=ON
+BuildOption:    -DCMAKE_INSTALL_RPATH="%{tde_libdir}"
+BuildOption:    -DBIN_INSTALL_DIR=%{tde_bindir}
+BuildOption:    -DINCLUDE_INSTALL_DIR=%{tde_tdeincludedir}
+BuildOption:    -DLIB_INSTALL_DIR=%{tde_libdir}
+BuildOption:    -DMAN_INSTALL_DIR=%{tde_mandir}
+BuildOption:    -DPKGCONFIG_INSTALL_DIR=%{tde_tdelibdir}/pkgconfig
+BuildOption:    -DSHARE_INSTALL_PREFIX=%{tde_datadir}
+BuildOption:    -DWITH_DBSEARCHENGINE=ON -DWITH_KCAL=ON -DBUILD_ALL=ON
+%{!?with_kioslave:BuildOption:    -DBUILD_KIOSLAVE=OFF}
 
 BuildRequires:	trinity-tdelibs-devel >= %{tde_version}
 BuildRequires:	trinity-perl-dcop >= %{tde_version}
 BuildRequires:	trinity-tdepim-devel >= %{tde_version}
 
 BuildRequires:	trinity-tde-cmake >= %{tde_version}
-%if "%{?toolchain}" != "clang"
-BuildRequires:	gcc-c++
-%endif
-BuildRequires:	libtool
-BuildRequires:	fdupes
 
-# SUSE desktop files utility
-%if 0%{?suse_version}
-BuildRequires:	update-desktop-files
-%endif
-
-%if 0%{?opensuse_bs} && 0%{?suse_version}
-# for xdg-menu script
-BuildRequires:	brp-check-trinity
-%endif
+%{!?with_clang:BuildRequires:	gcc-c++}
 
 # ACL support
-%if 0%{?mdkver}
-BuildRequires:	%{_lib}acl-devel
-%else
-BuildRequires:	libacl-devel
-%endif
+BuildRequires:	pkgconfig(libacl)
 
 # IDN support
-BuildRequires:	libidn-devel
+BuildRequires:	pkgconfig(libidn)
 
 # GAMIN support
 #  Not on openSUSE.
-%if ( 0%{?rhel} && 0%{?rhel} <= 8 ) || ( 0%{?fedora} && 0%{?fedora} <= 33 ) || 0%{?mgaversion} || 0%{?mdkversion}
-%define with_gamin 1
-BuildRequires:	gamin-devel
-%endif
+%{?with_gamin:BuildRequires:	gamin-devel}
 
 # PCRE2 support
-%if 0%{?mdkver}
-BuildRequires:	%{_lib}pcre2-devel
-%else
-BuildRequires:	pcre2-devel
-%endif
+BuildRequires:	pkgconfig(libpcre2-posix)
 
 # for kbugbuster/libkcal
 BuildRequires:	desktop-file-utils
 
-# # DB5 support
-# %if 0%{?rhel} >= 8 || 0%{?fedora} >= 33
-# BuildRequires:	libdb-devel
-
-# # DB4 support
-# %else
-# %if 0%{?mgaversion} || 0%{?mdkversion}
-# #BuildRequires:	%{_lib}db4.8-devel
-# %endif
-# %if 0%{?rhel} || 0%{?fedora}
-# BuildRequires:	db4-devel
-# %endif
-# %if 0%{?suse_version}
-# BuildRequires:	libdb-4_8-devel
-# %endif
-# %endif
-# %if 0%{?mdkver}
-# BuildRequires:	%{_lib}db5.3-devel
-# %endif
-
 BuildRequires:  db-devel
 
 # kbabel,  F-7+: flex >= 2.5.33-9
-BuildRequires:	flex
-%if 0%{?mdkversion} && 0%{?pclinuxos} == 0
 BuildRequires:	flex-devel
-%endif
+
 # umbrello
 BuildRequires:	libxml2-devel
 BuildRequires:	subversion-devel
 BuildRequires:	neon-devel
 
 # XSLT support
-%if 0%{?mdkver}
-BuildRequires:	%{_lib}xslt-devel
-%else
-BuildRequires:	libxslt-devel
-%endif
+BuildRequires:	pkgconfig(libxslt)
 
 # PERL support
 BuildRequires:	perl
-%if 0%{?fedora} >= 19
-BuildRequires:	perl-podlators
-%endif
 
 # OPENSSL support
-%if 0%{?mdkver}
-BuildRequires:	%{_lib}openssl-devel
-%else
-BuildRequires:	openssl-devel
-%endif
+BuildRequires:	pkgconfig(openssl)
 
 # PYTHON support
-%if 0%{?rhel} >= 8 || 0%{?fedora} >= 30 || 0%{?mgaversion} >= 8 || 0%{?suse_version} >= 1500
-%define python python3
-%else
 %define python python
-%endif
 
-%if 0%{?mgaversion} || 0%{?mdkversion}
 BuildRequires:	%{_lib}ltdl-devel
 BuildRequires:	%{_lib}binutils-devel
-%endif
-%if 0%{?fedora} >= 6 || 0%{?rhel} >= 5 || 0%{?suse_version}
-BuildRequires:	binutils-devel
-%endif
-%if 0%{?fedora} >= 6 || 0%{?rhel} >= 5 || 0%{?suse_version} >= 1220
-BuildRequires:	libtool-ltdl-devel
-%endif
 
 BuildRequires:  pkgconfig(xrender)
 BuildRequires:  pkgconfig(x11)
 BuildRequires:  pkgconfig(ice)
 BuildRequires:  pkgconfig(sm)
-
-# KIOSLAVE
-# Does not build on RHEL4
-%if 0%{?rhel} >= 5 || 0%{?fedora} || 0%{?suse_version} || 0%{?mgaversion} || 0%{?mdkversion}
-%define build_kioslave 1
-%endif
 
 Obsoletes:		trinity-kdesdk < %{?epoch:%{epoch}:}%{version}-%{release}
 Provides:		trinity-kdesdk = %{?epoch:%{epoch}:}%{version}-%{release}
@@ -210,7 +144,7 @@ Requires: trinity-kuiviewer = %{?epoch:%{epoch}:}%{version}-%{release}
 Requires: trinity-libcvsservice0 = %{?epoch:%{epoch}:}%{version}-%{release}
 Requires: trinity-poxml = %{?epoch:%{epoch}:}%{version}-%{release}
 Requires: trinity-umbrello = %{?epoch:%{epoch}:}%{version}-%{release}
-%{?build_kioslave:Requires: %{name}-tdeio-plugins = %{?epoch:%{epoch}:}%{version}-%{release}}
+%{?with_kioslave:Requires: %{name}-tdeio-plugins = %{?epoch:%{epoch}:}%{version}-%{release}}
 Requires: trinity-tdeunittest = %{?epoch:%{epoch}:}%{version}-%{release}
 
 
@@ -507,11 +441,7 @@ This package is part of Trinity, and a component of the TDE SDK module.
 Summary:	Format converters for tdecachegrind profiling visualisation tool
 Group:		Development/Languages/Other
 Requires:	%{python}
-%if 0%{?suse_version} || 0%{?rhel} == 4
-Requires:	php
-%else
 Requires:	php-cli
-%endif
 
 %description -n trinity-tdecachegrind-converters
 This is a collection of scripts for converting the output from
@@ -968,7 +898,7 @@ This package is part of Trinity, and a component of the TDE SDK module.
 
 ##########
 
-%if 0%{?build_kioslave}
+%if %{with kioslave}
 
 %package tdeio-plugins
 Summary:	Subversion ioslave for Trinity
@@ -1098,83 +1028,20 @@ This package contains the development files for tdesdk.
 # kompare
 %{tde_libdir}/libkompareinterface.so
 
-##########
 
-%if 0%{?suse_version} && 0%{?opensuse_bs} == 0
-%debug_package
-%endif
-
-##########
-
-
-%prep
-%autosetup -n %{tarball_name}-%{version}%{?preversion:~%{preversion}}
-
-%if 0%{?fedora} >= 30 || 0%{?rhel} >= 8 || 0%{?mgaversion} >= 8
-# Fix shebangs
-sed -i "scripts/kdelnk2desktop.py" \
-       "scripts/zonetab2pot.py" \
-       "tdecachegrind/converters/hotshot2calltree" \
-       "umbrello/umbrello/headings/heading.py" \
-    -e "s|env python|env %{python}|"
-%endif
-
-
-%build
+%conf -p
 unset QTDIR QTINC QTLIB
 export PATH="%{tde_bindir}:${PATH}"
 export PKG_CONFIG_PATH="%{tde_libdir}/pkgconfig"
 
-if ! rpm -E %%cmake|grep -e 'cd build\|cd ${CMAKE_BUILD_DIR:-build}'; then
-  %__mkdir_p build
-  cd build
-fi
-
-# FIXME PCLinuxOS: '/usr/bin/ld: cannot find -ltdeabc'
-%if 0%{?pclinuxos}
-export RPM_OPT_FLAGS="${RPM_OPT_FLAGS} -L%{tde_libdir}"
-%endif
-
-%cmake \
-  -DCMAKE_BUILD_TYPE="RelWithDebInfo" \
-  -DCMAKE_C_FLAGS="${RPM_OPT_FLAGS}" \
-  -DCMAKE_CXX_FLAGS="${RPM_OPT_FLAGS}" \
-  -DCMAKE_SKIP_RPATH=OFF \
-  -DCMAKE_SKIP_INSTALL_RPATH=OFF \
-  -DCMAKE_NO_BUILTIN_CHRPATH=ON \
-  -DCMAKE_INSTALL_RPATH="%{tde_libdir}" \
-  -DCMAKE_VERBOSE_MAKEFILE=ON \
-  -DWITH_GCC_VISIBILITY=OFF \
-  \
-  -DBIN_INSTALL_DIR=%{tde_bindir} \
-  -DINCLUDE_INSTALL_DIR=%{tde_tdeincludedir} \
-  -DLIB_INSTALL_DIR=%{tde_libdir} \
-  -DMAN_INSTALL_DIR=%{tde_mandir} \
-  -DPKGCONFIG_INSTALL_DIR=%{tde_tdelibdir}/pkgconfig \
-  -DSHARE_INSTALL_PREFIX=%{tde_datadir} \
-  \
-  -DWITH_DBSEARCHENGINE=ON \
-  -DWITH_KCAL=ON \
-  -DBUILD_ALL=ON \
-  %{!?build_kioslave:-DBUILD_KIOSLAVE=OFF} \
-  ..
-
-%__make %{?_smp_mflags} || %__make
-
-
-%install
-export PATH="%{tde_bindir}:${PATH}"
-
-%__make install DESTDIR=%{?buildroot} -C build
-
-
+%install -a
 # Installs kdepalettes
 %__install -D -m 644 kdepalettes/kde_xpaintrc %{?buildroot}%{tde_datadir}/kdepalettes/kde_xpaintrc
 %__install -D -m 644 kdepalettes/KDE_Gimp %{?buildroot}%{tde_datadir}/kdepalettes/KDE_Gimp
 %__install -D -m 644 kdepalettes/README %{?buildroot}%{tde_datadir}/kdepalettes/README
 
 # Installs SVN protocols as alternatives
-%if 0%{?build_kioslave}
+%if %{with kioslave}
 %__mv -f %{?buildroot}%{tde_datadir}/services/svn+file.protocol %{?buildroot}%{tde_datadir}/services/svn+file.protocol_tdesdk
 %__mv -f %{?buildroot}%{tde_datadir}/services/svn+http.protocol %{?buildroot}%{tde_datadir}/services/svn+http.protocol_tdesdk
 %__mv -f %{?buildroot}%{tde_datadir}/services/svn+https.protocol %{?buildroot}%{tde_datadir}/services/svn+https.protocol_tdesdk
@@ -1195,19 +1062,6 @@ mv admin appframework bin existing include kapp kpartapp kpartplugin kapptemplat
 tar cfz kapptemplate.tar.gz kapptemplate
 rm -rf kapptemplate
 popd
-
-# Updates applications categories for openSUSE
-%if 0%{?suse_version}
-%suse_update_desktop_file    kuiviewer      Development GUIDesigner
-%suse_update_desktop_file    umbrello       Development Design
-%suse_update_desktop_file    kbugbuster     Development Debugger
-%suse_update_desktop_file -u catalogmanager Development Translation
-%suse_update_desktop_file    kbabel         Development Translation
-%suse_update_desktop_file -u kbabeldict     Development Translation
-%suse_update_desktop_file    cervisia       Development RevisionControl
-%suse_update_desktop_file    kompare        Development RevisionControl
-%suse_update_desktop_file    tdecachegrind  Development Profiling
-%endif
 
 # Links duplicate files
 %fdupes "%{?buildroot}%{tde_datadir}"
