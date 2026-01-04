@@ -15,16 +15,7 @@
 
 %define tde_pkg tdesdk
 %define tde_prefix /opt/trinity
-%define tde_bindir %{tde_prefix}/bin
-%define tde_datadir %{tde_prefix}/share
-%define tde_docdir %{tde_datadir}/doc
-%define tde_includedir %{tde_prefix}/include
-%define tde_libdir %{tde_prefix}/%{_lib}
-%define tde_mandir %{tde_datadir}/man
-%define tde_tdeappdir %{tde_datadir}/applications/tde
-%define tde_tdedocdir %{tde_docdir}/tde
-%define tde_tdeincludedir %{tde_includedir}/tde
-%define tde_tdelibdir %{tde_libdir}/trinity
+
 
 %undefine __brp_remove_la_files
 %define dont_remove_libtool_files 1
@@ -45,29 +36,20 @@ URL:			http://www.trinitydesktop.org/
 
 License:		GPLv2+
 
-#Vendor:		Trinity Desktop
-#Packager:		Francois Andriot <francois.andriot@free.fr>
-
-Prefix:			%{tde_prefix}
 
 Source0:		https://mirror.ppa.trinitydesktop.org/trinity/releases/R%{tde_version}/main/core/%{tarball_name}-%{version}%{?preversion:~%{preversion}}.tar.xz
 Source1:		%{name}-rpmlintrc
 
 BuildSystem:    cmake
+
 BuildOption:    -DCMAKE_BUILD_TYPE="RelWithDebInfo"
-BuildOption:    -DCMAKE_SKIP_RPATH=OFF
-BuildOption:    -DCMAKE_SKIP_INSTALL_RPATH=OFF
-BuildOption:    -DCMAKE_BUILD_WITH_INSTALL_RPATH=ON
-BuildOption:    -DCMAKE_NO_BUILTIN_CHRPATH=ON
-BuildOption:    -DCMAKE_INSTALL_RPATH="%{tde_libdir}"
-BuildOption:    -DBIN_INSTALL_DIR=%{tde_bindir}
-BuildOption:    -DINCLUDE_INSTALL_DIR=%{tde_tdeincludedir}
-BuildOption:    -DLIB_INSTALL_DIR=%{tde_libdir}
-BuildOption:    -DMAN_INSTALL_DIR=%{tde_mandir}
-BuildOption:    -DPKGCONFIG_INSTALL_DIR=%{tde_tdelibdir}/pkgconfig
-BuildOption:    -DSHARE_INSTALL_PREFIX=%{tde_datadir}
+BuildOption:    -DCMAKE_INSTALL_PREFIX=%{tde_prefix}
+BuildOption:    -DINCLUDE_INSTALL_DIR=%{tde_prefix}/include/tde
+BuildOption:    -DPKGCONFIG_INSTALL_DIR=%{tde_prefix}/%{_lib}/trinity/pkgconfig
+BuildOption:    -DSHARE_INSTALL_PREFIX=%{tde_prefix}/share
 BuildOption:    -DWITH_DBSEARCHENGINE=ON -DWITH_KCAL=ON -DBUILD_ALL=ON
-%{!?with_kioslave:BuildOption:    -DBUILD_KIOSLAVE=OFF}
+BuildOption:    -DBUILD_KIOSLAVE=%{!?with_kioslave:OFF}%{with_kioslave:ON}
+BuildOption:    -DWITH_GCC_VISIBILITY=%{!?with_clang:ON}%{?with_clang:OFF}
 
 BuildRequires:	trinity-tdelibs-devel >= %{tde_version}
 BuildRequires:	trinity-perl-dcop >= %{tde_version}
@@ -180,27 +162,27 @@ This package is part of Trinity, and a component of the TDE SDK module.
 
 %files -n trinity-cervisia
 %defattr(-,root,root,-)
-%{tde_bindir}/cervisia
-%{tde_libdir}/libtdeinit_cervisia.la
-%{tde_libdir}/libtdeinit_cervisia.so
-%{tde_tdelibdir}/cervisia.la
-%{tde_tdelibdir}/cervisia.so
-%{tde_tdelibdir}/libcervisiapart.la
-%{tde_tdelibdir}/libcervisiapart.so
-%{tde_tdeappdir}/cervisia.desktop
-%{tde_datadir}/apps/cervisia/
-%{tde_datadir}/apps/cervisiapart/
-%{tde_datadir}/apps/tdeconf_update/cervisia.upd
-%{tde_datadir}/apps/tdeconf_update/cervisia-change_repos_list.pl
-%{tde_datadir}/apps/tdeconf_update/cervisia-normalize_cvsroot.pl
-%{tde_datadir}/apps/tdeconf_update/move_repositories.pl
-%{tde_datadir}/apps/tdeconf_update/change_colors.pl
-%{tde_datadir}/config.kcfg/cervisiapart.kcfg
-%{tde_datadir}/icons/hicolor/*/apps/cervisia.png
-%{tde_datadir}/icons/crystalsvg/*/actions/vcs_*.png
-%{tde_datadir}/icons/crystalsvg/scalable/actions/vcs_*.svgz
-%{tde_mandir}/man1/cervisia.1*
-%{tde_tdedocdir}/HTML/en/cervisia/
+%{tde_prefix}/bin/cervisia
+%{tde_prefix}/%{_lib}/libtdeinit_cervisia.la
+%{tde_prefix}/%{_lib}/libtdeinit_cervisia.so
+%{tde_prefix}/%{_lib}/trinity/cervisia.la
+%{tde_prefix}/%{_lib}/trinity/cervisia.so
+%{tde_prefix}/%{_lib}/trinity/libcervisiapart.la
+%{tde_prefix}/%{_lib}/trinity/libcervisiapart.so
+%{tde_prefix}/share/applications/tde/cervisia.desktop
+%{tde_prefix}/share/apps/cervisia/
+%{tde_prefix}/share/apps/cervisiapart/
+%{tde_prefix}/share/apps/tdeconf_update/cervisia.upd
+%{tde_prefix}/share/apps/tdeconf_update/cervisia-change_repos_list.pl
+%{tde_prefix}/share/apps/tdeconf_update/cervisia-normalize_cvsroot.pl
+%{tde_prefix}/share/apps/tdeconf_update/move_repositories.pl
+%{tde_prefix}/share/apps/tdeconf_update/change_colors.pl
+%{tde_prefix}/share/config.kcfg/cervisiapart.kcfg
+%{tde_prefix}/share/icons/hicolor/*/apps/cervisia.png
+%{tde_prefix}/share/icons/crystalsvg/*/actions/vcs_*.png
+%{tde_prefix}/share/icons/crystalsvg/scalable/actions/vcs_*.svgz
+%{tde_prefix}/share/man/man1/cervisia.1*
+%{tde_prefix}/share/doc/tde/HTML/en/cervisia/
 
 ##########
 
@@ -218,13 +200,13 @@ This package is part of Trinity, and a component of the TDE SDK module.
 
 %files -n trinity-kapptemplate
 %defattr(-,root,root,-)
-%{tde_bindir}/kapptemplate
-%{tde_datadir}/apps/kapptemplate/
-%{tde_mandir}/man1/kapptemplate.1*
+%{tde_prefix}/bin/kapptemplate
+%{tde_prefix}/share/apps/kapptemplate/
+%{tde_prefix}/share/man/man1/kapptemplate.1*
 
 %pre -n trinity-kapptemplate
-if [ -d "%{tde_bindir}/kapptemplate" ]; then
-  rm -rf "%{tde_bindir}/kapptemplate"
+if [ -d "%{tde_prefix}/bin/kapptemplate" ]; then
+  rm -rf "%{tde_prefix}/bin/kapptemplate"
 fi
 
 ##########
@@ -248,107 +230,107 @@ This package is part of Trinity, and a component of the TDE SDK module.
 
 %files -n trinity-kbabel
 %defattr(-,root,root,-)
-%{tde_bindir}/catalogmanager
-%{tde_bindir}/kbabel
-%{tde_bindir}/kbabeldict
-%{tde_libdir}/libkbabelcommon.so.*
-%{tde_libdir}/libkbabeldictplugin.so.*
-%{tde_tdelibdir}/tdefile_po.la
-%{tde_tdelibdir}/tdefile_po.so
-%{tde_tdelibdir}/pothumbnail.la
-%{tde_tdelibdir}/pothumbnail.so
-%{tde_tdelibdir}/kbabel_accelstool.la
-%{tde_tdelibdir}/kbabel_accelstool.so
-%{tde_tdelibdir}/kbabel_argstool.la
-%{tde_tdelibdir}/kbabel_argstool.so
-%{tde_tdelibdir}/kbabel_contexttool.la
-%{tde_tdelibdir}/kbabel_contexttool.so
-%{tde_tdelibdir}/kbabel_equationstool.la
-%{tde_tdelibdir}/kbabel_equationstool.so
-%{tde_tdelibdir}/kbabel_gettextexport.la
-%{tde_tdelibdir}/kbabel_gettextexport.so
-%{tde_tdelibdir}/kbabel_gettextimport.la
-%{tde_tdelibdir}/kbabel_gettextimport.so
-%{tde_tdelibdir}/kbabel_lengthtool.la
-%{tde_tdelibdir}/kbabel_lengthtool.so
-%{tde_tdelibdir}/kbabel_linguistexport.la
-%{tde_tdelibdir}/kbabel_linguistexport.so
-%{tde_tdelibdir}/kbabel_linguistimport.la
-%{tde_tdelibdir}/kbabel_linguistimport.so
-%{tde_tdelibdir}/kbabel_nottranslatedtool.la
-%{tde_tdelibdir}/kbabel_nottranslatedtool.so
-%{tde_tdelibdir}/kbabel_pluraltool.la
-%{tde_tdelibdir}/kbabel_pluraltool.so
-%{tde_tdelibdir}/kbabel_punctuationtool.la
-%{tde_tdelibdir}/kbabel_punctuationtool.so
-%{tde_tdelibdir}/kbabel_regexptool.la
-%{tde_tdelibdir}/kbabel_regexptool.so
-%{tde_tdelibdir}/kbabel_setfuzzytool.la
-%{tde_tdelibdir}/kbabel_setfuzzytool.so
-%{tde_tdelibdir}/kbabel_whitespacetool.la
-%{tde_tdelibdir}/kbabel_whitespacetool.so
-%{tde_tdelibdir}/kbabel_xliffexport.la
-%{tde_tdelibdir}/kbabel_xliffexport.so
-%{tde_tdelibdir}/kbabel_xliffimport.la
-%{tde_tdelibdir}/kbabel_xliffimport.so
-%{tde_tdelibdir}/kbabel_xmltool.la
-%{tde_tdelibdir}/kbabel_xmltool.so
-%{tde_tdelibdir}/kbabeldict_dbsearchengine.la
-%{tde_tdelibdir}/kbabeldict_dbsearchengine.so
-%{tde_tdelibdir}/kbabeldict_poauxiliary.la
-%{tde_tdelibdir}/kbabeldict_poauxiliary.so
-%{tde_tdelibdir}/kbabeldict_pocompendium.la
-%{tde_tdelibdir}/kbabeldict_pocompendium.so
-%{tde_tdelibdir}/kbabeldict_tmxcompendium.la
-%{tde_tdelibdir}/kbabeldict_tmxcompendium.so
-%{tde_tdeappdir}/catalogmanager.desktop
-%{tde_tdeappdir}/kbabel.desktop
-%{tde_tdeappdir}/kbabeldict.desktop
-%{tde_datadir}/apps/catalogmanager/
-%{tde_datadir}/apps/kbabel/
-%{tde_datadir}/apps/tdeconf_update/kbabel-difftoproject.upd
-%{tde_datadir}/apps/tdeconf_update/kbabel-project.upd
-%{tde_datadir}/apps/tdeconf_update/kbabel-projectrename.upd
-%{tde_datadir}/config.kcfg/kbabel.kcfg
-%{tde_datadir}/config.kcfg/kbprojectsettings.kcfg
-%{tde_tdedocdir}/HTML/en/kbabel/
-%{tde_datadir}/icons/hicolor/*/apps/catalogmanager.png
-%{tde_datadir}/icons/hicolor/*/apps/kbabel.png
-%{tde_datadir}/icons/hicolor/*/apps/kbabeldict.png
-%{tde_datadir}/icons/locolor/*/apps/catalogmanager.png
-%{tde_datadir}/icons/locolor/*/apps/kbabel.png
-%{tde_datadir}/icons/locolor/*/apps/kbabeldict.png
-%{tde_datadir}/services/dbsearchengine.desktop
-%{tde_datadir}/services/tdefile_po.desktop
-%{tde_datadir}/services/pothumbnail.desktop
-%{tde_datadir}/services/kbabel_accelstool.desktop
-%{tde_datadir}/services/kbabel_argstool.desktop
-%{tde_datadir}/services/kbabel_contexttool.desktop
-%{tde_datadir}/services/kbabel_equationstool.desktop
-%{tde_datadir}/services/kbabel_gettext_export.desktop
-%{tde_datadir}/services/kbabel_gettext_import.desktop
-%{tde_datadir}/services/kbabel_lengthtool.desktop
-%{tde_datadir}/services/kbabel_linguist_export.desktop
-%{tde_datadir}/services/kbabel_linguist_import.desktop
-%{tde_datadir}/services/kbabel_nottranslatedtool.desktop
-%{tde_datadir}/services/kbabel_pluralformstool.desktop
-%{tde_datadir}/services/kbabel_punctuationtool.desktop
-%{tde_datadir}/services/kbabel_regexptool.desktop
-%{tde_datadir}/services/kbabel_setfuzzytool.desktop
-%{tde_datadir}/services/kbabel_whitespacetool.desktop
-%{tde_datadir}/services/kbabel_xliff_export.desktop
-%{tde_datadir}/services/kbabel_xliff_import.desktop
-%{tde_datadir}/services/kbabel_xmltool.desktop
-%{tde_datadir}/services/pocompendium.desktop
-%{tde_datadir}/services/poauxiliary.desktop
-%{tde_datadir}/services/tmxcompendium.desktop
-%{tde_datadir}/servicetypes/kbabel_tool.desktop
-%{tde_datadir}/servicetypes/kbabel_validator.desktop
-%{tde_datadir}/servicetypes/kbabeldict_module.desktop
-%{tde_datadir}/servicetypes/kbabelfilter.desktop
-%{tde_mandir}/man1/catalogmanager.1*
-%{tde_mandir}/man1/kbabel.1*
-%{tde_mandir}/man1/kbabeldict.1*
+%{tde_prefix}/bin/catalogmanager
+%{tde_prefix}/bin/kbabel
+%{tde_prefix}/bin/kbabeldict
+%{tde_prefix}/%{_lib}/libkbabelcommon.so.*
+%{tde_prefix}/%{_lib}/libkbabeldictplugin.so.*
+%{tde_prefix}/%{_lib}/trinity/tdefile_po.la
+%{tde_prefix}/%{_lib}/trinity/tdefile_po.so
+%{tde_prefix}/%{_lib}/trinity/pothumbnail.la
+%{tde_prefix}/%{_lib}/trinity/pothumbnail.so
+%{tde_prefix}/%{_lib}/trinity/kbabel_accelstool.la
+%{tde_prefix}/%{_lib}/trinity/kbabel_accelstool.so
+%{tde_prefix}/%{_lib}/trinity/kbabel_argstool.la
+%{tde_prefix}/%{_lib}/trinity/kbabel_argstool.so
+%{tde_prefix}/%{_lib}/trinity/kbabel_contexttool.la
+%{tde_prefix}/%{_lib}/trinity/kbabel_contexttool.so
+%{tde_prefix}/%{_lib}/trinity/kbabel_equationstool.la
+%{tde_prefix}/%{_lib}/trinity/kbabel_equationstool.so
+%{tde_prefix}/%{_lib}/trinity/kbabel_gettextexport.la
+%{tde_prefix}/%{_lib}/trinity/kbabel_gettextexport.so
+%{tde_prefix}/%{_lib}/trinity/kbabel_gettextimport.la
+%{tde_prefix}/%{_lib}/trinity/kbabel_gettextimport.so
+%{tde_prefix}/%{_lib}/trinity/kbabel_lengthtool.la
+%{tde_prefix}/%{_lib}/trinity/kbabel_lengthtool.so
+%{tde_prefix}/%{_lib}/trinity/kbabel_linguistexport.la
+%{tde_prefix}/%{_lib}/trinity/kbabel_linguistexport.so
+%{tde_prefix}/%{_lib}/trinity/kbabel_linguistimport.la
+%{tde_prefix}/%{_lib}/trinity/kbabel_linguistimport.so
+%{tde_prefix}/%{_lib}/trinity/kbabel_nottranslatedtool.la
+%{tde_prefix}/%{_lib}/trinity/kbabel_nottranslatedtool.so
+%{tde_prefix}/%{_lib}/trinity/kbabel_pluraltool.la
+%{tde_prefix}/%{_lib}/trinity/kbabel_pluraltool.so
+%{tde_prefix}/%{_lib}/trinity/kbabel_punctuationtool.la
+%{tde_prefix}/%{_lib}/trinity/kbabel_punctuationtool.so
+%{tde_prefix}/%{_lib}/trinity/kbabel_regexptool.la
+%{tde_prefix}/%{_lib}/trinity/kbabel_regexptool.so
+%{tde_prefix}/%{_lib}/trinity/kbabel_setfuzzytool.la
+%{tde_prefix}/%{_lib}/trinity/kbabel_setfuzzytool.so
+%{tde_prefix}/%{_lib}/trinity/kbabel_whitespacetool.la
+%{tde_prefix}/%{_lib}/trinity/kbabel_whitespacetool.so
+%{tde_prefix}/%{_lib}/trinity/kbabel_xliffexport.la
+%{tde_prefix}/%{_lib}/trinity/kbabel_xliffexport.so
+%{tde_prefix}/%{_lib}/trinity/kbabel_xliffimport.la
+%{tde_prefix}/%{_lib}/trinity/kbabel_xliffimport.so
+%{tde_prefix}/%{_lib}/trinity/kbabel_xmltool.la
+%{tde_prefix}/%{_lib}/trinity/kbabel_xmltool.so
+%{tde_prefix}/%{_lib}/trinity/kbabeldict_dbsearchengine.la
+%{tde_prefix}/%{_lib}/trinity/kbabeldict_dbsearchengine.so
+%{tde_prefix}/%{_lib}/trinity/kbabeldict_poauxiliary.la
+%{tde_prefix}/%{_lib}/trinity/kbabeldict_poauxiliary.so
+%{tde_prefix}/%{_lib}/trinity/kbabeldict_pocompendium.la
+%{tde_prefix}/%{_lib}/trinity/kbabeldict_pocompendium.so
+%{tde_prefix}/%{_lib}/trinity/kbabeldict_tmxcompendium.la
+%{tde_prefix}/%{_lib}/trinity/kbabeldict_tmxcompendium.so
+%{tde_prefix}/share/applications/tde/catalogmanager.desktop
+%{tde_prefix}/share/applications/tde/kbabel.desktop
+%{tde_prefix}/share/applications/tde/kbabeldict.desktop
+%{tde_prefix}/share/apps/catalogmanager/
+%{tde_prefix}/share/apps/kbabel/
+%{tde_prefix}/share/apps/tdeconf_update/kbabel-difftoproject.upd
+%{tde_prefix}/share/apps/tdeconf_update/kbabel-project.upd
+%{tde_prefix}/share/apps/tdeconf_update/kbabel-projectrename.upd
+%{tde_prefix}/share/config.kcfg/kbabel.kcfg
+%{tde_prefix}/share/config.kcfg/kbprojectsettings.kcfg
+%{tde_prefix}/share/doc/tde/HTML/en/kbabel/
+%{tde_prefix}/share/icons/hicolor/*/apps/catalogmanager.png
+%{tde_prefix}/share/icons/hicolor/*/apps/kbabel.png
+%{tde_prefix}/share/icons/hicolor/*/apps/kbabeldict.png
+%{tde_prefix}/share/icons/locolor/*/apps/catalogmanager.png
+%{tde_prefix}/share/icons/locolor/*/apps/kbabel.png
+%{tde_prefix}/share/icons/locolor/*/apps/kbabeldict.png
+%{tde_prefix}/share/services/dbsearchengine.desktop
+%{tde_prefix}/share/services/tdefile_po.desktop
+%{tde_prefix}/share/services/pothumbnail.desktop
+%{tde_prefix}/share/services/kbabel_accelstool.desktop
+%{tde_prefix}/share/services/kbabel_argstool.desktop
+%{tde_prefix}/share/services/kbabel_contexttool.desktop
+%{tde_prefix}/share/services/kbabel_equationstool.desktop
+%{tde_prefix}/share/services/kbabel_gettext_export.desktop
+%{tde_prefix}/share/services/kbabel_gettext_import.desktop
+%{tde_prefix}/share/services/kbabel_lengthtool.desktop
+%{tde_prefix}/share/services/kbabel_linguist_export.desktop
+%{tde_prefix}/share/services/kbabel_linguist_import.desktop
+%{tde_prefix}/share/services/kbabel_nottranslatedtool.desktop
+%{tde_prefix}/share/services/kbabel_pluralformstool.desktop
+%{tde_prefix}/share/services/kbabel_punctuationtool.desktop
+%{tde_prefix}/share/services/kbabel_regexptool.desktop
+%{tde_prefix}/share/services/kbabel_setfuzzytool.desktop
+%{tde_prefix}/share/services/kbabel_whitespacetool.desktop
+%{tde_prefix}/share/services/kbabel_xliff_export.desktop
+%{tde_prefix}/share/services/kbabel_xliff_import.desktop
+%{tde_prefix}/share/services/kbabel_xmltool.desktop
+%{tde_prefix}/share/services/pocompendium.desktop
+%{tde_prefix}/share/services/poauxiliary.desktop
+%{tde_prefix}/share/services/tmxcompendium.desktop
+%{tde_prefix}/share/servicetypes/kbabel_tool.desktop
+%{tde_prefix}/share/servicetypes/kbabel_validator.desktop
+%{tde_prefix}/share/servicetypes/kbabeldict_module.desktop
+%{tde_prefix}/share/servicetypes/kbabelfilter.desktop
+%{tde_prefix}/share/man/man1/catalogmanager.1*
+%{tde_prefix}/share/man/man1/kbabel.1*
+%{tde_prefix}/share/man/man1/kbabeldict.1*
 
 ##########
 
@@ -374,11 +356,11 @@ This package is part of Trinity, and a component of the TDE SDK module.
 
 %files -n trinity-kbabel-devel
 %defattr(-,root,root,-)
-%{tde_tdeincludedir}/kbabel/
-%{tde_libdir}/libkbabelcommon.la
-%{tde_libdir}/libkbabelcommon.so
-%{tde_libdir}/libkbabeldictplugin.la
-%{tde_libdir}/libkbabeldictplugin.so
+%{tde_prefix}/include/tde/kbabel/
+%{tde_prefix}/%{_lib}/libkbabelcommon.la
+%{tde_prefix}/%{_lib}/libkbabelcommon.so
+%{tde_prefix}/%{_lib}/libkbabeldictplugin.la
+%{tde_prefix}/%{_lib}/libkbabeldictplugin.so
 
 ##########
 
@@ -396,16 +378,16 @@ This package is part of Trinity, and a component of the TDE SDK module.
 
 %files -n trinity-kbugbuster
 %defattr(-,root,root,-)
-%{tde_bindir}/kbugbuster
-%{tde_tdelibdir}/kcal_bugzilla.la
-%{tde_tdelibdir}/kcal_bugzilla.so
-%{tde_tdeappdir}/kbugbuster.desktop
-%{tde_datadir}/apps/kbugbuster/
-%{tde_datadir}/icons/hicolor/*/apps/kbugbuster.png
-%{tde_datadir}/icons/locolor/*/apps/kbugbuster.png
-%{tde_datadir}/services/tderesources/kcal/bugzilla.desktop
-%{tde_tdedocdir}/HTML/en/kbugbuster/
-%{tde_mandir}/man1/kbugbuster.1*
+%{tde_prefix}/bin/kbugbuster
+%{tde_prefix}/%{_lib}/trinity/kcal_bugzilla.la
+%{tde_prefix}/%{_lib}/trinity/kcal_bugzilla.so
+%{tde_prefix}/share/applications/tde/kbugbuster.desktop
+%{tde_prefix}/share/apps/kbugbuster/
+%{tde_prefix}/share/icons/hicolor/*/apps/kbugbuster.png
+%{tde_prefix}/share/icons/locolor/*/apps/kbugbuster.png
+%{tde_prefix}/share/services/tderesources/kcal/bugzilla.desktop
+%{tde_prefix}/share/doc/tde/HTML/en/kbugbuster/
+%{tde_prefix}/share/man/man1/kbugbuster.1*
 
 ##########
 
@@ -426,14 +408,14 @@ This package is part of Trinity, and a component of the TDE SDK module.
 
 %files -n trinity-tdecachegrind
 %defattr(-,root,root,-)
-%{tde_bindir}/tdecachegrind
-%{tde_tdeappdir}/tdecachegrind.desktop
-%{tde_datadir}/apps/tdecachegrind/
-%{tde_datadir}/icons/locolor/*/apps/tdecachegrind.png
-%{tde_datadir}/icons/hicolor/*/apps/tdecachegrind.png
-%{tde_datadir}/mimelnk/application/x-tdecachegrind.desktop
-%{tde_tdedocdir}/HTML/en/tdecachegrind/
-%{tde_mandir}/man1/tdecachegrind.1*
+%{tde_prefix}/bin/tdecachegrind
+%{tde_prefix}/share/applications/tde/tdecachegrind.desktop
+%{tde_prefix}/share/apps/tdecachegrind/
+%{tde_prefix}/share/icons/locolor/*/apps/tdecachegrind.png
+%{tde_prefix}/share/icons/hicolor/*/apps/tdecachegrind.png
+%{tde_prefix}/share/mimelnk/application/x-tdecachegrind.desktop
+%{tde_prefix}/share/doc/tde/HTML/en/tdecachegrind/
+%{tde_prefix}/share/man/man1/tdecachegrind.1*
 
 ##########
 
@@ -456,16 +438,16 @@ This package is part of Trinity, and a component of the TDE SDK module.
 
 %files -n trinity-tdecachegrind-converters
 %defattr(-,root,root,-)
-%{tde_bindir}/dprof2calltree
-%{tde_bindir}/hotshot2calltree
-%{tde_bindir}/memprof2calltree
-%{tde_bindir}/op2calltree
-%{tde_bindir}/pprof2calltree
-%{tde_mandir}/man1/dprof2calltree.1*
-%{tde_mandir}/man1/hotshot2calltree.1*
-%{tde_mandir}/man1/memprof2calltree.1*
-%{tde_mandir}/man1/op2calltree.1*
-%{tde_mandir}/man1/pprof2calltree.1*
+%{tde_prefix}/bin/dprof2calltree
+%{tde_prefix}/bin/hotshot2calltree
+%{tde_prefix}/bin/memprof2calltree
+%{tde_prefix}/bin/op2calltree
+%{tde_prefix}/bin/pprof2calltree
+%{tde_prefix}/share/man/man1/dprof2calltree.1*
+%{tde_prefix}/share/man/man1/hotshot2calltree.1*
+%{tde_prefix}/share/man/man1/memprof2calltree.1*
+%{tde_prefix}/share/man/man1/op2calltree.1*
+%{tde_prefix}/share/man/man1/pprof2calltree.1*
 
 ##########
 
@@ -482,16 +464,16 @@ This package is part of Trinity, and a component of the TDE SDK module.
 
 %files kfile-plugins
 %defattr(-,root,root,-)
-%{tde_tdelibdir}/tdefile_cpp.so
-%{tde_tdelibdir}/tdefile_cpp.la
-%{tde_tdelibdir}/tdefile_diff.so
-%{tde_tdelibdir}/tdefile_diff.la
-%{tde_tdelibdir}/tdefile_ts.so
-%{tde_tdelibdir}/tdefile_ts.la
-%{tde_datadir}/services/tdefile_cpp.desktop
-%{tde_datadir}/services/tdefile_diff.desktop
-%{tde_datadir}/services/tdefile_h.desktop
-%{tde_datadir}/services/tdefile_ts.desktop
+%{tde_prefix}/%{_lib}/trinity/tdefile_cpp.so
+%{tde_prefix}/%{_lib}/trinity/tdefile_cpp.la
+%{tde_prefix}/%{_lib}/trinity/tdefile_diff.so
+%{tde_prefix}/%{_lib}/trinity/tdefile_diff.la
+%{tde_prefix}/%{_lib}/trinity/tdefile_ts.so
+%{tde_prefix}/%{_lib}/trinity/tdefile_ts.la
+%{tde_prefix}/share/services/tdefile_cpp.desktop
+%{tde_prefix}/share/services/tdefile_diff.desktop
+%{tde_prefix}/share/services/tdefile_h.desktop
+%{tde_prefix}/share/services/tdefile_ts.desktop
 
 ##########
 
@@ -513,17 +495,17 @@ This package is part of Trinity, and a component of the TDE SDK module.
 
 %files misc
 %defattr(-,root,root,-)
-%{tde_tdelibdir}/tdeabcformat_kdeaccounts.la
-%{tde_tdelibdir}/tdeabcformat_kdeaccounts.so
-%{tde_tdelibdir}/plugins/styles/scheck.so
-%{tde_tdelibdir}/plugins/styles/scheck.la
-%{tde_datadir}/apps/tdeabc/formats/kdeaccountsplugin.desktop
-%{tde_datadir}/apps/tdestyle/themes/scheck.themerc
-%{tde_datadir}/kdepalettes/
+%{tde_prefix}/%{_lib}/trinity/tdeabcformat_kdeaccounts.la
+%{tde_prefix}/%{_lib}/trinity/tdeabcformat_kdeaccounts.so
+%{tde_prefix}/%{_lib}/trinity/plugins/styles/scheck.so
+%{tde_prefix}/%{_lib}/trinity/plugins/styles/scheck.la
+%{tde_prefix}/share/apps/tdeabc/formats/kdeaccountsplugin.desktop
+%{tde_prefix}/share/apps/tdestyle/themes/scheck.themerc
+%{tde_prefix}/share/kdepalettes/
 
-%{tde_libdir}/libkstartperf.so.*
-%{tde_libdir}/libkstartperf.la
-%{tde_bindir}/kstartperf
+%{tde_prefix}/%{_lib}/libkstartperf.so.*
+%{tde_prefix}/%{_lib}/libkstartperf.la
+%{tde_prefix}/bin/kstartperf
 
 ##########
 
@@ -548,99 +530,99 @@ This package is part of Trinity, and a component of the TDE SDK module.
 
 %files scripts
 %defattr(-,root,root,-)
-%{tde_bindir}/adddebug
-%{tde_bindir}/build-progress.sh
-%{tde_bindir}/cheatmake
-%{tde_bindir}/create_cvsignore
-%{tde_bindir}/create_makefile
-%{tde_bindir}/create_makefiles
-%{tde_bindir}/cvs-clean
-%{tde_bindir}/cvs2dist
-%{tde_bindir}/cvsbackport
-%{tde_bindir}/cvsblame
-%{tde_bindir}/cvscheck
-%{tde_bindir}/cvsforwardport
-%{tde_bindir}/cvslastchange
-%{tde_bindir}/cvslastlog
-%{tde_bindir}/cvsrevertlast
-%{tde_bindir}/cvsversion
-%{tde_bindir}/cxxmetric
-%{tde_bindir}/extend_dmalloc
-%{tde_bindir}/extractattr
-%{tde_bindir}/extractrc
-%{tde_bindir}/findmissingcrystal
-%{tde_bindir}/fixkdeincludes
-%{tde_bindir}/fixuifiles
-%{tde_bindir}/includemocs
-%{tde_bindir}/kde-build
-%{tde_bindir}/kdedoc
-%{tde_bindir}/tdekillall
-%{tde_bindir}/kdelnk2desktop.py*
-%{tde_bindir}/kdemangen.pl
-%{tde_bindir}/makeobj
-%{tde_bindir}/noncvslist
-%{tde_bindir}/package_crystalsvg
-%{tde_bindir}/png2mng.pl
-%{tde_bindir}/pruneemptydirs
-%{tde_bindir}/qtdoc
-%{tde_bindir}/zonetab2pot.py*
-%{tde_bindir}/svn2dist
-%{tde_bindir}/svnrevertlast
-%{tde_bindir}/svnforwardport
-%{tde_bindir}/nonsvnlist
-%{tde_bindir}/tdesvn-build
-%{tde_bindir}/svnlastlog
-%{tde_bindir}/svnversions
-%{tde_bindir}/create_svnignore
-%{tde_bindir}/svnlastchange
-%{tde_bindir}/colorsvn
-%{tde_bindir}/svnaddcurrentdir
-%{tde_bindir}/svnbackport
-%{tde_bindir}/svngettags
-%{tde_bindir}/svnchangesince
-%{tde_bindir}/svn-clean
-%{tde_datadir}/apps/katepart/syntax/tdesvn-buildrc.xml
-%{tde_mandir}/man1/adddebug.1*
-%{tde_mandir}/man1/build-progress.sh.1*
-%{tde_mandir}/man1/cheatmake.1*
-%{tde_mandir}/man1/create_cvsignore.1*
-%{tde_mandir}/man1/create_makefile.1*
-%{tde_mandir}/man1/create_makefiles.1*
-%{tde_mandir}/man1/cvsblame.1*
-%{tde_mandir}/man1/cvscheck.1*
-%{tde_mandir}/man1/cvs-clean.1*
-%{tde_mandir}/man1/cvs2dist.1*
-%{tde_mandir}/man1/cvsaskpass.1*
-%{tde_mandir}/man1/cvsbackport.1*
-%{tde_mandir}/man1/cvsforwardport.1*
-%{tde_mandir}/man1/cvslastchange.1*
-%{tde_mandir}/man1/cvslastlog.1*
-%{tde_mandir}/man1/cvsrevertlast.1*
-%{tde_mandir}/man1/cvsservice.1*
-%{tde_mandir}/man1/cvsversion.1*
-%{tde_mandir}/man1/cxxmetric.1*
-%{tde_mandir}/man1/extend_dmalloc.1*
-%{tde_mandir}/man1/extractattr.1*
-%{tde_mandir}/man1/extractrc.1*
-%{tde_mandir}/man1/findmissingcrystal.1*
-%{tde_mandir}/man1/fixkdeincludes.1*
-%{tde_mandir}/man1/fixuifiles.1*
-%{tde_mandir}/man1/includemocs.1*
-%{tde_mandir}/man1/kde-build.1*
-%{tde_mandir}/man1/kdedoc.1*
-%{tde_mandir}/man1/kdelnk2desktop.py.1*
-%{tde_mandir}/man1/kdemangen.pl.1*
-%{tde_mandir}/man1/licensecheck.1*
-%{tde_mandir}/man1/noncvslist.1*
-%{tde_mandir}/man1/makeobj.1*
-%{tde_mandir}/man1/package_crystalsvg.1*
-%{tde_mandir}/man1/png2mng.pl.1
-%{tde_mandir}/man1/pruneemptydirs.1
-%{tde_mandir}/man1/qtdoc.1*
-%{tde_mandir}/man1/tdekillall.1*
-%{tde_mandir}/man1/tdesvn-build.1*
-%{tde_mandir}/man1/zonetab2pot.py.1*
-%{tde_tdedocdir}/HTML/en/tdesvn-build/
+%{tde_prefix}/bin/adddebug
+%{tde_prefix}/bin/build-progress.sh
+%{tde_prefix}/bin/cheatmake
+%{tde_prefix}/bin/create_cvsignore
+%{tde_prefix}/bin/create_makefile
+%{tde_prefix}/bin/create_makefiles
+%{tde_prefix}/bin/cvs-clean
+%{tde_prefix}/bin/cvs2dist
+%{tde_prefix}/bin/cvsbackport
+%{tde_prefix}/bin/cvsblame
+%{tde_prefix}/bin/cvscheck
+%{tde_prefix}/bin/cvsforwardport
+%{tde_prefix}/bin/cvslastchange
+%{tde_prefix}/bin/cvslastlog
+%{tde_prefix}/bin/cvsrevertlast
+%{tde_prefix}/bin/cvsversion
+%{tde_prefix}/bin/cxxmetric
+%{tde_prefix}/bin/extend_dmalloc
+%{tde_prefix}/bin/extractattr
+%{tde_prefix}/bin/extractrc
+%{tde_prefix}/bin/findmissingcrystal
+%{tde_prefix}/bin/fixkdeincludes
+%{tde_prefix}/bin/fixuifiles
+%{tde_prefix}/bin/includemocs
+%{tde_prefix}/bin/kde-build
+%{tde_prefix}/bin/kdedoc
+%{tde_prefix}/bin/tdekillall
+%{tde_prefix}/bin/kdelnk2desktop.py*
+%{tde_prefix}/bin/kdemangen.pl
+%{tde_prefix}/bin/makeobj
+%{tde_prefix}/bin/noncvslist
+%{tde_prefix}/bin/package_crystalsvg
+%{tde_prefix}/bin/png2mng.pl
+%{tde_prefix}/bin/pruneemptydirs
+%{tde_prefix}/bin/qtdoc
+%{tde_prefix}/bin/zonetab2pot.py*
+%{tde_prefix}/bin/svn2dist
+%{tde_prefix}/bin/svnrevertlast
+%{tde_prefix}/bin/svnforwardport
+%{tde_prefix}/bin/nonsvnlist
+%{tde_prefix}/bin/tdesvn-build
+%{tde_prefix}/bin/svnlastlog
+%{tde_prefix}/bin/svnversions
+%{tde_prefix}/bin/create_svnignore
+%{tde_prefix}/bin/svnlastchange
+%{tde_prefix}/bin/colorsvn
+%{tde_prefix}/bin/svnaddcurrentdir
+%{tde_prefix}/bin/svnbackport
+%{tde_prefix}/bin/svngettags
+%{tde_prefix}/bin/svnchangesince
+%{tde_prefix}/bin/svn-clean
+%{tde_prefix}/share/apps/katepart/syntax/tdesvn-buildrc.xml
+%{tde_prefix}/share/man/man1/adddebug.1*
+%{tde_prefix}/share/man/man1/build-progress.sh.1*
+%{tde_prefix}/share/man/man1/cheatmake.1*
+%{tde_prefix}/share/man/man1/create_cvsignore.1*
+%{tde_prefix}/share/man/man1/create_makefile.1*
+%{tde_prefix}/share/man/man1/create_makefiles.1*
+%{tde_prefix}/share/man/man1/cvsblame.1*
+%{tde_prefix}/share/man/man1/cvscheck.1*
+%{tde_prefix}/share/man/man1/cvs-clean.1*
+%{tde_prefix}/share/man/man1/cvs2dist.1*
+%{tde_prefix}/share/man/man1/cvsaskpass.1*
+%{tde_prefix}/share/man/man1/cvsbackport.1*
+%{tde_prefix}/share/man/man1/cvsforwardport.1*
+%{tde_prefix}/share/man/man1/cvslastchange.1*
+%{tde_prefix}/share/man/man1/cvslastlog.1*
+%{tde_prefix}/share/man/man1/cvsrevertlast.1*
+%{tde_prefix}/share/man/man1/cvsservice.1*
+%{tde_prefix}/share/man/man1/cvsversion.1*
+%{tde_prefix}/share/man/man1/cxxmetric.1*
+%{tde_prefix}/share/man/man1/extend_dmalloc.1*
+%{tde_prefix}/share/man/man1/extractattr.1*
+%{tde_prefix}/share/man/man1/extractrc.1*
+%{tde_prefix}/share/man/man1/findmissingcrystal.1*
+%{tde_prefix}/share/man/man1/fixkdeincludes.1*
+%{tde_prefix}/share/man/man1/fixuifiles.1*
+%{tde_prefix}/share/man/man1/includemocs.1*
+%{tde_prefix}/share/man/man1/kde-build.1*
+%{tde_prefix}/share/man/man1/kdedoc.1*
+%{tde_prefix}/share/man/man1/kdelnk2desktop.py.1*
+%{tde_prefix}/share/man/man1/kdemangen.pl.1*
+%{tde_prefix}/share/man/man1/licensecheck.1*
+%{tde_prefix}/share/man/man1/noncvslist.1*
+%{tde_prefix}/share/man/man1/makeobj.1*
+%{tde_prefix}/share/man/man1/package_crystalsvg.1*
+%{tde_prefix}/share/man/man1/png2mng.pl.1
+%{tde_prefix}/share/man/man1/pruneemptydirs.1
+%{tde_prefix}/share/man/man1/qtdoc.1*
+%{tde_prefix}/share/man/man1/tdekillall.1*
+%{tde_prefix}/share/man/man1/tdesvn-build.1*
+%{tde_prefix}/share/man/man1/zonetab2pot.py.1*
+%{tde_prefix}/share/doc/tde/HTML/en/tdesvn-build/
 #scripts/kde-devel-gdb /opt/trinity/share/tdesdk-scripts
 #scripts/kde-devel-vim.vim /opt/trinity/share/tdesdk-scripts
 #scripts/kde-emacs/*.el /opt/trinity/share/emacs/site-lisp/tdesdk-scripts
@@ -652,9 +634,9 @@ This package is part of Trinity, and a component of the TDE SDK module.
 #debian/desktop-i18n/msgsplit /opt/trinity/lib/kubuntu-desktop-i18n/
 
 %if "%{?tde_prefix}" != "/usr"
-%{tde_bindir}/licensecheck
+%{tde_prefix}/bin/licensecheck
 %else
-%exclude %{tde_bindir}/licensecheck
+%exclude %{tde_prefix}/bin/licensecheck
 %endif
 
 ##########
@@ -672,18 +654,18 @@ This package is part of Trinity, and a component of the TDE SDK module.
 
 %files -n trinity-kmtrace
 %defattr(-,root,root,-)
-%{tde_bindir}/demangle
-%{tde_bindir}/kminspector
-%{tde_bindir}/kmmatch
-%{tde_bindir}/kmtrace
-%dir %{tde_libdir}/kmtrace
-%{tde_libdir}/kmtrace/libktrace.la
-%{tde_libdir}/kmtrace/libktrace.so
-%{tde_datadir}/apps/kmtrace/
-%{tde_mandir}/man1/demangle.1*
-%{tde_mandir}/man1/kminspector.1*
-%{tde_mandir}/man1/kmmatch.1*
-%{tde_mandir}/man1/kmtrace.1*
+%{tde_prefix}/bin/demangle
+%{tde_prefix}/bin/kminspector
+%{tde_prefix}/bin/kmmatch
+%{tde_prefix}/bin/kmtrace
+%dir %{tde_prefix}/%{_lib}/kmtrace
+%{tde_prefix}/%{_lib}/kmtrace/libktrace.la
+%{tde_prefix}/%{_lib}/kmtrace/libktrace.so
+%{tde_prefix}/share/apps/kmtrace/
+%{tde_prefix}/share/man/man1/demangle.1*
+%{tde_prefix}/share/man/man1/kminspector.1*
+%{tde_prefix}/share/man/man1/kmmatch.1*
+%{tde_prefix}/share/man/man1/kmtrace.1*
 
 ##########
 
@@ -700,23 +682,23 @@ This package is part of Trinity, and a component of the TDE SDK module.
 
 %files -n trinity-kompare
 %defattr(-,root,root,-)
-%{tde_bindir}/kompare
-%{tde_libdir}/libkompareinterface.la
-%{tde_libdir}/libkompareinterface.so.*
-%{tde_tdelibdir}/libkomparenavtreepart.la
-%{tde_tdelibdir}/libkomparenavtreepart.so
-%{tde_tdelibdir}/libkomparepart.la
-%{tde_tdelibdir}/libkomparepart.so
-%{tde_tdeappdir}/kompare.desktop
-%{tde_datadir}/apps/kompare/
-%{tde_datadir}/services/komparenavtreepart.desktop
-%{tde_datadir}/services/komparepart.desktop
-%{tde_datadir}/servicetypes/komparenavigationpart.desktop
-%{tde_datadir}/servicetypes/kompareviewpart.desktop
-%{tde_datadir}/icons/hicolor/*/apps/kompare.png
-%{tde_datadir}/icons/hicolor/scalable/apps/kompare.svgz
-%{tde_tdedocdir}/HTML/en/kompare/
-%{tde_mandir}/man1/kompare.1*
+%{tde_prefix}/bin/kompare
+%{tde_prefix}/%{_lib}/libkompareinterface.la
+%{tde_prefix}/%{_lib}/libkompareinterface.so.*
+%{tde_prefix}/%{_lib}/trinity/libkomparenavtreepart.la
+%{tde_prefix}/%{_lib}/trinity/libkomparenavtreepart.so
+%{tde_prefix}/%{_lib}/trinity/libkomparepart.la
+%{tde_prefix}/%{_lib}/trinity/libkomparepart.so
+%{tde_prefix}/share/applications/tde/kompare.desktop
+%{tde_prefix}/share/apps/kompare/
+%{tde_prefix}/share/services/komparenavtreepart.desktop
+%{tde_prefix}/share/services/komparepart.desktop
+%{tde_prefix}/share/servicetypes/komparenavigationpart.desktop
+%{tde_prefix}/share/servicetypes/kompareviewpart.desktop
+%{tde_prefix}/share/icons/hicolor/*/apps/kompare.png
+%{tde_prefix}/share/icons/hicolor/scalable/apps/kompare.svgz
+%{tde_prefix}/share/doc/tde/HTML/en/kompare/
+%{tde_prefix}/share/man/man1/kompare.1*
 
 ##########
 
@@ -739,9 +721,9 @@ This package is part of Trinity, and a component of the TDE SDK module.
 
 %files -n trinity-kspy
 %defattr(-,root,root,-)
-%{tde_libdir}/libkspy.la
-%{tde_libdir}/libkspy.so.*
-%{tde_mandir}/man1/testkspy.1*
+%{tde_prefix}/%{_lib}/libkspy.la
+%{tde_prefix}/%{_lib}/libkspy.so.*
+%{tde_prefix}/share/man/man1/testkspy.1*
 
 ##########
 
@@ -760,20 +742,20 @@ This package is part of Trinity, and a component of the TDE SDK module.
 
 %files -n trinity-kuiviewer
 %defattr(-,root,root,-)
-%{tde_bindir}/kuiviewer
-%{tde_tdelibdir}/libkuiviewerpart.so
-%{tde_tdelibdir}/libkuiviewerpart.la
-%{tde_tdelibdir}/quithumbnail.so
-%{tde_tdelibdir}/quithumbnail.la
-%{tde_tdeappdir}/kuiviewer.desktop
-%{tde_datadir}/apps/kuiviewer/
-%{tde_datadir}/apps/kuiviewerpart/
-%{tde_datadir}/icons/hicolor/*/apps/kuiviewer.png
-%{tde_datadir}/icons/locolor/*/apps/kuiviewer.png
-%{tde_datadir}/services/designerthumbnail.desktop
-%{tde_datadir}/services/kuiviewer_part.desktop
-%{tde_tdedocdir}/HTML/en/kuiviewer/
-%{tde_mandir}/man1/kuiviewer.1*
+%{tde_prefix}/bin/kuiviewer
+%{tde_prefix}/%{_lib}/trinity/libkuiviewerpart.so
+%{tde_prefix}/%{_lib}/trinity/libkuiviewerpart.la
+%{tde_prefix}/%{_lib}/trinity/quithumbnail.so
+%{tde_prefix}/%{_lib}/trinity/quithumbnail.la
+%{tde_prefix}/share/applications/tde/kuiviewer.desktop
+%{tde_prefix}/share/apps/kuiviewer/
+%{tde_prefix}/share/apps/kuiviewerpart/
+%{tde_prefix}/share/icons/hicolor/*/apps/kuiviewer.png
+%{tde_prefix}/share/icons/locolor/*/apps/kuiviewer.png
+%{tde_prefix}/share/services/designerthumbnail.desktop
+%{tde_prefix}/share/services/kuiviewer_part.desktop
+%{tde_prefix}/share/doc/tde/HTML/en/kuiviewer/
+%{tde_prefix}/share/man/man1/kuiviewer.1*
 
 ##########
 
@@ -794,16 +776,16 @@ This package is part of Trinity, and a component of the TDE SDK module.
 
 %files -n trinity-libcvsservice0
 %defattr(-,root,root,-)
-%{tde_bindir}/cvsaskpass
-%{tde_bindir}/cvsservice
-%{tde_libdir}/libcvsservice.so.*
-%{tde_libdir}/libtdeinit_cvsaskpass.so
-%{tde_libdir}/libtdeinit_cvsservice.so
-%{tde_tdelibdir}/cvsaskpass.la
-%{tde_tdelibdir}/cvsaskpass.so
-%{tde_tdelibdir}/cvsservice.la
-%{tde_tdelibdir}/cvsservice.so
-%{tde_datadir}/services/cvsservice.desktop
+%{tde_prefix}/bin/cvsaskpass
+%{tde_prefix}/bin/cvsservice
+%{tde_prefix}/%{_lib}/libcvsservice.so.*
+%{tde_prefix}/%{_lib}/libtdeinit_cvsaskpass.so
+%{tde_prefix}/%{_lib}/libtdeinit_cvsservice.so
+%{tde_prefix}/%{_lib}/trinity/cvsaskpass.la
+%{tde_prefix}/%{_lib}/trinity/cvsaskpass.so
+%{tde_prefix}/%{_lib}/trinity/cvsservice.la
+%{tde_prefix}/%{_lib}/trinity/cvsservice.so
+%{tde_prefix}/share/services/cvsservice.desktop
 
 ##########
 
@@ -825,14 +807,14 @@ This package is part of Trinity, and a component of the TDE SDK module.
 
 %files -n trinity-libcvsservice-devel
 %defattr(-,root,root,-)
-%{tde_tdeincludedir}/cvsjob_stub.h
-%{tde_tdeincludedir}/cvsservice_stub.h
-%{tde_tdeincludedir}/repository_stub.h
-%{tde_libdir}/libcvsservice.la
-%{tde_libdir}/libcvsservice.so
-%{tde_libdir}/libtdeinit_cvsaskpass.la
-%{tde_libdir}/libtdeinit_cvsservice.la
-%{tde_datadir}/cmake/cervisia.cmake
+%{tde_prefix}/include/tde/cvsjob_stub.h
+%{tde_prefix}/include/tde/cvsservice_stub.h
+%{tde_prefix}/include/tde/repository_stub.h
+%{tde_prefix}/%{_lib}/libcvsservice.la
+%{tde_prefix}/%{_lib}/libcvsservice.so
+%{tde_prefix}/%{_lib}/libtdeinit_cvsaskpass.la
+%{tde_prefix}/%{_lib}/libtdeinit_cvsservice.la
+%{tde_prefix}/share/cmake/cervisia.cmake
 
 ##########
 
@@ -851,16 +833,16 @@ This package is part of Trinity, and a component of the TDE SDK module.
 
 %files -n trinity-poxml
 %defattr(-,root,root,-)
-%{tde_bindir}/po2xml
-%{tde_bindir}/split2po
-%{tde_bindir}/swappo
-%{tde_bindir}/transxx
-%{tde_bindir}/xml2pot
-%{tde_mandir}/man1/po2xml.1*
-%{tde_mandir}/man1/split2po.1*
-%{tde_mandir}/man1/swappo.1*
-%{tde_mandir}/man1/transxx.1*
-%{tde_mandir}/man1/xml2pot.1*
+%{tde_prefix}/bin/po2xml
+%{tde_prefix}/bin/split2po
+%{tde_prefix}/bin/swappo
+%{tde_prefix}/bin/transxx
+%{tde_prefix}/bin/xml2pot
+%{tde_prefix}/share/man/man1/po2xml.1*
+%{tde_prefix}/share/man/man1/split2po.1*
+%{tde_prefix}/share/man/man1/swappo.1*
+%{tde_prefix}/share/man/man1/transxx.1*
+%{tde_prefix}/share/man/man1/xml2pot.1*
 
 ##########
 
@@ -882,19 +864,19 @@ This package is part of Trinity, and a component of the TDE SDK module.
 
 %files -n trinity-umbrello
 %defattr(-,root,root,-)
-%{tde_bindir}/umbodoc
-%{tde_bindir}/umbrello
-%{tde_tdeappdir}/umbrello.desktop
-%{tde_datadir}/apps/umbrello/
-%{tde_datadir}/icons/crystalsvg/*/actions/umbrello_*.png
-%{tde_datadir}/icons/crystalsvg/*/mimetypes/umbrellofile.png
-%{tde_datadir}/icons/crystalsvg/scalable/mimetypes/umbrellofile.svgz
-%{tde_datadir}/icons/hicolor/*/apps/umbrello.png
-%{tde_datadir}/icons/hicolor/scalable/apps/umbrello.svgz
-%{tde_datadir}/icons/hicolor/*/mimetypes/umbrellofile.png
-%{tde_datadir}/mimelnk/application/x-umbrello.desktop
-%{tde_tdedocdir}/HTML/en/umbrello/
-%{tde_mandir}/man1/umbrello.1*
+%{tde_prefix}/bin/umbodoc
+%{tde_prefix}/bin/umbrello
+%{tde_prefix}/share/applications/tde/umbrello.desktop
+%{tde_prefix}/share/apps/umbrello/
+%{tde_prefix}/share/icons/crystalsvg/*/actions/umbrello_*.png
+%{tde_prefix}/share/icons/crystalsvg/*/mimetypes/umbrellofile.png
+%{tde_prefix}/share/icons/crystalsvg/scalable/mimetypes/umbrellofile.svgz
+%{tde_prefix}/share/icons/hicolor/*/apps/umbrello.png
+%{tde_prefix}/share/icons/hicolor/scalable/apps/umbrello.svgz
+%{tde_prefix}/share/icons/hicolor/*/mimetypes/umbrellofile.png
+%{tde_prefix}/share/mimelnk/application/x-umbrello.desktop
+%{tde_prefix}/share/doc/tde/HTML/en/umbrello/
+%{tde_prefix}/share/man/man1/umbrello.1*
 
 ##########
 
@@ -917,38 +899,38 @@ This package is part of Trinity, and a component of the TDE SDK module.
 
 %files tdeio-plugins
 %defattr(-,root,root,-)
-%{tde_bindir}/tdeio_svn_helper
-%{tde_tdelibdir}/kded_ksvnd.la
-%{tde_tdelibdir}/kded_ksvnd.so
-%{tde_tdelibdir}/tdeio_svn.la
-%{tde_tdelibdir}/tdeio_svn.so
-%{tde_datadir}/apps/konqueror/servicemenus/subversion_toplevel.desktop
-%{tde_datadir}/apps/konqueror/servicemenus/subversion.desktop
-%{tde_datadir}/services/kded/ksvnd.desktop
-%{tde_datadir}/services/svn+file.protocol_tdesdk
-%{tde_datadir}/services/svn+http.protocol_tdesdk
-%{tde_datadir}/services/svn+https.protocol_tdesdk
-%{tde_datadir}/services/svn+ssh.protocol_tdesdk
-%{tde_datadir}/services/svn.protocol_tdesdk
-%{tde_datadir}/icons/crystalsvg/*/actions/svn_switch.png
-%{tde_datadir}/icons/crystalsvg/*/actions/svn_merge.png
-%{tde_datadir}/icons/crystalsvg/*/actions/svn_branch.png
-%{tde_datadir}/icons/crystalsvg/*/actions/svn_remove.png
-%{tde_datadir}/icons/crystalsvg/*/actions/svn_add.png
-%{tde_datadir}/icons/crystalsvg/*/actions/svn_status.png
-%{tde_datadir}/icons/crystalsvg/scalable/actions/svn_add.svgz
-%{tde_datadir}/icons/crystalsvg/scalable/actions/svn_status.svgz
-%{tde_datadir}/icons/crystalsvg/scalable/actions/svn_remove.svgz
-%{tde_datadir}/icons/crystalsvg/scalable/actions/svn_switch.svgz
-%{tde_datadir}/icons/crystalsvg/scalable/actions/svn_branch.svgz
-%{tde_datadir}/icons/crystalsvg/scalable/actions/svn_merge.svgz
+%{tde_prefix}/bin/tdeio_svn_helper
+%{tde_prefix}/%{_lib}/trinity/kded_ksvnd.la
+%{tde_prefix}/%{_lib}/trinity/kded_ksvnd.so
+%{tde_prefix}/%{_lib}/trinity/tdeio_svn.la
+%{tde_prefix}/%{_lib}/trinity/tdeio_svn.so
+%{tde_prefix}/share/apps/konqueror/servicemenus/subversion_toplevel.desktop
+%{tde_prefix}/share/apps/konqueror/servicemenus/subversion.desktop
+%{tde_prefix}/share/services/kded/ksvnd.desktop
+%{tde_prefix}/share/services/svn+file.protocol_tdesdk
+%{tde_prefix}/share/services/svn+http.protocol_tdesdk
+%{tde_prefix}/share/services/svn+https.protocol_tdesdk
+%{tde_prefix}/share/services/svn+ssh.protocol_tdesdk
+%{tde_prefix}/share/services/svn.protocol_tdesdk
+%{tde_prefix}/share/icons/crystalsvg/*/actions/svn_switch.png
+%{tde_prefix}/share/icons/crystalsvg/*/actions/svn_merge.png
+%{tde_prefix}/share/icons/crystalsvg/*/actions/svn_branch.png
+%{tde_prefix}/share/icons/crystalsvg/*/actions/svn_remove.png
+%{tde_prefix}/share/icons/crystalsvg/*/actions/svn_add.png
+%{tde_prefix}/share/icons/crystalsvg/*/actions/svn_status.png
+%{tde_prefix}/share/icons/crystalsvg/scalable/actions/svn_add.svgz
+%{tde_prefix}/share/icons/crystalsvg/scalable/actions/svn_status.svgz
+%{tde_prefix}/share/icons/crystalsvg/scalable/actions/svn_remove.svgz
+%{tde_prefix}/share/icons/crystalsvg/scalable/actions/svn_switch.svgz
+%{tde_prefix}/share/icons/crystalsvg/scalable/actions/svn_branch.svgz
+%{tde_prefix}/share/icons/crystalsvg/scalable/actions/svn_merge.svgz
 
 %post tdeio-plugins
 for proto in svn+file svn+http svn+https svn+ssh svn; do
   update-alternatives --install \
-    %{tde_datadir}/services/${proto}.protocol \
+    %{tde_prefix}/share/services/${proto}.protocol \
     ${proto}.protocol \
-    %{tde_datadir}/services/${proto}.protocol_tdesdk \
+    %{tde_prefix}/share/services/${proto}.protocol_tdesdk \
     10
 done
 
@@ -957,7 +939,7 @@ if [ $1 -eq 0 ]; then
   for proto in svn+file svn+http svn+https svn+ssh svn; do
     update-alternatives --remove \
       ${proto}.protocol \
-      %{tde_datadir}/services/${proto}.protocol_tdesdk || :
+      %{tde_prefix}/share/services/${proto}.protocol_tdesdk || :
   done
 fi
 
@@ -983,12 +965,12 @@ This package is part of Trinity, and a component of the TDE SDK module.
 
 %files -n trinity-tdeunittest
 %defattr(-,root,root,-)
-%{tde_bindir}/tdeunittest
-%{tde_bindir}/tdeunittest_debughelper
-%{tde_bindir}/tdeunittestmod
-%{tde_bindir}/tdeunittestguimodrunner
-%{tde_libdir}/libtdeunittestgui.la
-%{tde_libdir}/libtdeunittestgui.so.*
+%{tde_prefix}/bin/tdeunittest
+%{tde_prefix}/bin/tdeunittest_debughelper
+%{tde_prefix}/bin/tdeunittestmod
+%{tde_prefix}/bin/tdeunittestguimodrunner
+%{tde_prefix}/%{_lib}/libtdeunittestgui.la
+%{tde_prefix}/%{_lib}/libtdeunittestgui.so.*
 
 ##########
 
@@ -1014,49 +996,49 @@ This package contains the development files for tdesdk.
 %files devel
 %defattr(-,root,root,-)
 # misc
-%{tde_tdeincludedir}/kprofilemethod.h
-%{tde_libdir}/libkstartperf.so
+%{tde_prefix}/include/tde/kprofilemethod.h
+%{tde_prefix}/%{_lib}/libkstartperf.so
 # kspy
-%{tde_tdeincludedir}/kspy.h
-%{tde_libdir}/libkspy.so
+%{tde_prefix}/include/tde/kspy.h
+%{tde_prefix}/%{_lib}/libkspy.so
 # kmtrace
-%{tde_libdir}/kmtrace/libktrace_s.a
-%{tde_tdeincludedir}/ktrace.h
+%{tde_prefix}/%{_lib}/kmtrace/libktrace_s.a
+%{tde_prefix}/include/tde/ktrace.h
 # tdeunittest
-%{tde_libdir}/libtdeunittestgui.so
-%{tde_tdeincludedir}/tdeunittest/runnergui.h
+%{tde_prefix}/%{_lib}/libtdeunittestgui.so
+%{tde_prefix}/include/tde/tdeunittest/runnergui.h
 # kompare
-%{tde_libdir}/libkompareinterface.so
+%{tde_prefix}/%{_lib}/libkompareinterface.so
 
 
 %conf -p
 unset QTDIR QTINC QTLIB
-export PATH="%{tde_bindir}:${PATH}"
-export PKG_CONFIG_PATH="%{tde_libdir}/pkgconfig"
+export PATH="%{tde_prefix}/bin:${PATH}"
+export PKG_CONFIG_PATH="%{tde_prefix}/%{_lib}/pkgconfig"
 
 %install -a
 # Installs kdepalettes
-%__install -D -m 644 kdepalettes/kde_xpaintrc %{?buildroot}%{tde_datadir}/kdepalettes/kde_xpaintrc
-%__install -D -m 644 kdepalettes/KDE_Gimp %{?buildroot}%{tde_datadir}/kdepalettes/KDE_Gimp
-%__install -D -m 644 kdepalettes/README %{?buildroot}%{tde_datadir}/kdepalettes/README
+%__install -D -m 644 kdepalettes/kde_xpaintrc %{?buildroot}%{tde_prefix}/share/kdepalettes/kde_xpaintrc
+%__install -D -m 644 kdepalettes/KDE_Gimp %{?buildroot}%{tde_prefix}/share/kdepalettes/KDE_Gimp
+%__install -D -m 644 kdepalettes/README %{?buildroot}%{tde_prefix}/share/kdepalettes/README
 
 # Installs SVN protocols as alternatives
 %if %{with kioslave}
-%__mv -f %{?buildroot}%{tde_datadir}/services/svn+file.protocol %{?buildroot}%{tde_datadir}/services/svn+file.protocol_tdesdk
-%__mv -f %{?buildroot}%{tde_datadir}/services/svn+http.protocol %{?buildroot}%{tde_datadir}/services/svn+http.protocol_tdesdk
-%__mv -f %{?buildroot}%{tde_datadir}/services/svn+https.protocol %{?buildroot}%{tde_datadir}/services/svn+https.protocol_tdesdk
-%__mv -f %{?buildroot}%{tde_datadir}/services/svn+ssh.protocol %{?buildroot}%{tde_datadir}/services/svn+ssh.protocol_tdesdk
-%__mv -f %{?buildroot}%{tde_datadir}/services/svn.protocol %{?buildroot}%{tde_datadir}/services/svn.protocol_tdesdk
+%__mv -f %{?buildroot}%{tde_prefix}/share/services/svn+file.protocol %{?buildroot}%{tde_prefix}/share/services/svn+file.protocol_tdesdk
+%__mv -f %{?buildroot}%{tde_prefix}/share/services/svn+http.protocol %{?buildroot}%{tde_prefix}/share/services/svn+http.protocol_tdesdk
+%__mv -f %{?buildroot}%{tde_prefix}/share/services/svn+https.protocol %{?buildroot}%{tde_prefix}/share/services/svn+https.protocol_tdesdk
+%__mv -f %{?buildroot}%{tde_prefix}/share/services/svn+ssh.protocol %{?buildroot}%{tde_prefix}/share/services/svn+ssh.protocol_tdesdk
+%__mv -f %{?buildroot}%{tde_prefix}/share/services/svn.protocol %{?buildroot}%{tde_prefix}/share/services/svn.protocol_tdesdk
 %endif
 
 # Removes useless stuff
-%__rm -f %{?buildroot}%{tde_datadir}/apps/kapptemplate/admin/debianrules
+%__rm -f %{?buildroot}%{tde_prefix}/share/apps/kapptemplate/admin/debianrules
 
 # Fix permissions
-chmod 644 %{?buildroot}%{tde_datadir}/apps/kapptemplate/admin/Doxyfile.global
+chmod 644 %{?buildroot}%{tde_prefix}/share/apps/kapptemplate/admin/Doxyfile.global
 
 # Make kapptemplate archive
-pushd  %{?buildroot}%{tde_datadir}/apps/kapptemplate
+pushd  %{?buildroot}%{tde_prefix}/share/apps/kapptemplate
 mkdir kapptemplate
 mv admin appframework bin existing include kapp kpartapp kpartplugin kapptemplate/
 tar cfz kapptemplate.tar.gz kapptemplate
@@ -1064,5 +1046,5 @@ rm -rf kapptemplate
 popd
 
 # Links duplicate files
-%fdupes "%{?buildroot}%{tde_datadir}"
+%fdupes "%{?buildroot}%{tde_prefix}/share"
 
