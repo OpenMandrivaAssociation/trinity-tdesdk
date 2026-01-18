@@ -94,6 +94,8 @@ BuildRequires:	perl
 # OPENSSL support
 BuildRequires:	pkgconfig(openssl)
 
+BuildRequires:  fdupes
+
 # PYTHON support
 %define python python
 
