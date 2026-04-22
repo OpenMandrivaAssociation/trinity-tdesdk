@@ -7,12 +7,6 @@
 #  Having KDE libraries may cause FTBFS here !
 
 # TDE variables
-%define tde_epoch 2
-%if "%{?tde_version}" == ""
-%define tde_version 14.1.5
-%endif
-%define pkg_rel 3
-
 %define tde_pkg tdesdk
 %define tde_prefix /opt/trinity
 
@@ -30,14 +24,14 @@
 Name:			trinity-%{tde_pkg}
 Summary:		The Trinity Software Development Kit (SDK)
 Group:			Development/Tools/Other
-Version:		%{tde_version}
-Release:		%{?!preversion:%{pkg_rel}}%{?preversion:0_%{preversion}}%{?dist}
+Version:		14.1.5
+Release:		4
 URL:			http://www.trinitydesktop.org/
 
 License:		GPLv2+
 
 
-Source0:		https://mirror.ppa.trinitydesktop.org/trinity/releases/R%{tde_version}/main/core/%{tarball_name}-%{version}%{?preversion:~%{preversion}}.tar.xz
+Source0:		https://mirror.ppa.trinitydesktop.org/trinity/releases/R%{version}/main/core/%{tarball_name}-%{version}.tar.xz
 Source1:		%{name}-rpmlintrc
 
 BuildSystem:    cmake
@@ -51,11 +45,11 @@ BuildOption:    -DWITH_DBSEARCHENGINE=ON -DWITH_KCAL=ON -DBUILD_ALL=ON
 BuildOption:    -DBUILD_KIOSLAVE=%{!?with_kioslave:OFF}%{with_kioslave:ON}
 BuildOption:    -DWITH_GCC_VISIBILITY=%{!?with_clang:ON}%{?with_clang:OFF}
 
-BuildRequires:	trinity-tdelibs-devel >= %{tde_version}
-BuildRequires:	trinity-perl-dcop >= %{tde_version}
-BuildRequires:	trinity-tdepim-devel >= %{tde_version}
+BuildRequires:	trinity-tdelibs-devel >= %{version}
+BuildRequires:	trinity-perl-dcop >= %{version}
+BuildRequires:	trinity-tdepim-devel >= %{version}
 
-BuildRequires:	trinity-tde-cmake >= %{tde_version}
+BuildRequires:	trinity-tde-cmake >= %{version}
 
 %{!?with_clang:BuildRequires:	gcc-c++}
 
@@ -107,29 +101,29 @@ BuildRequires:  pkgconfig(x11)
 BuildRequires:  pkgconfig(ice)
 BuildRequires:  pkgconfig(sm)
 
-Obsoletes:		trinity-kdesdk < %{?epoch:%{epoch}:}%{version}-%{release}
-Provides:		trinity-kdesdk = %{?epoch:%{epoch}:}%{version}-%{release}
-Obsoletes:		trinity-kdesdk-libs < %{?epoch:%{epoch}:}%{version}-%{release}
-Provides:		trinity-kdesdk-libs = %{?epoch:%{epoch}:}%{version}-%{release}
+Obsoletes:		trinity-kdesdk < %{EVRD}
+Provides:		trinity-kdesdk = %{EVRD}
+Obsoletes:		trinity-kdesdk-libs < %{EVRD}
+Provides:		trinity-kdesdk-libs = %{EVRD}
 
-Requires: trinity-cervisia = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires: trinity-kapptemplate = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires: trinity-kbabel = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires: trinity-kbugbuster = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires: trinity-tdecachegrind = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires: trinity-tdecachegrind-converters = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires: %{name}-kfile-plugins = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires: %{name}-misc = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires: %{name}-scripts = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires: trinity-kmtrace = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires: trinity-kompare = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires: trinity-kspy = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires: trinity-kuiviewer = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires: trinity-libcvsservice0 = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires: trinity-poxml = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires: trinity-umbrello = %{?epoch:%{epoch}:}%{version}-%{release}
-%{?with_kioslave:Requires: %{name}-tdeio-plugins = %{?epoch:%{epoch}:}%{version}-%{release}}
-Requires: trinity-tdeunittest = %{?epoch:%{epoch}:}%{version}-%{release}
+Requires: trinity-cervisia = %{EVRD}
+Requires: trinity-kapptemplate = %{EVRD}
+Requires: trinity-kbabel = %{EVRD}
+Requires: trinity-kbugbuster = %{EVRD}
+Requires: trinity-tdecachegrind = %{EVRD}
+Requires: trinity-tdecachegrind-converters = %{EVRD}
+Requires: %{name}-kfile-plugins = %{EVRD}
+Requires: %{name}-misc = %{EVRD}
+Requires: %{name}-scripts = %{EVRD}
+Requires: trinity-kmtrace = %{EVRD}
+Requires: trinity-kompare = %{EVRD}
+Requires: trinity-kspy = %{EVRD}
+Requires: trinity-kuiviewer = %{EVRD}
+Requires: trinity-libcvsservice0 = %{EVRD}
+Requires: trinity-poxml = %{EVRD}
+Requires: trinity-umbrello = %{EVRD}
+%{?with_kioslave:Requires: %{name}-tdeio-plugins = %{EVRD}}
+Requires: trinity-tdeunittest = %{EVRD}
 
 
 %description
@@ -339,7 +333,7 @@ This package is part of Trinity, and a component of the TDE SDK module.
 %package -n trinity-kbabel-devel
 Summary:	PO-file editing suite for Trinity (development files)
 Group:		Development/Libraries/Other
-Requires:	trinity-kbabel = %{?epoch:%{epoch}:}%{version}-%{release}
+Requires:	trinity-kbabel = %{EVRD}
 
 %description -n trinity-kbabel-devel
 This is a suite of programs for editing gettext message files (PO-files).
@@ -369,7 +363,7 @@ This package is part of Trinity, and a component of the TDE SDK module.
 %package -n trinity-kbugbuster
 Summary:	A front end for the Trinity bug tracking system
 Group:		Development/Languages/Other
-Requires:	trinity-libkcal >= %{tde_version}
+Requires:	trinity-libkcal >= %{version}
 
 %description -n trinity-kbugbuster
 KBugBuster is a GUI front end for the TDE bug tracking system.
@@ -794,7 +788,7 @@ This package is part of Trinity, and a component of the TDE SDK module.
 %package -n trinity-libcvsservice-devel
 Summary:	Development files for CVS DCOP service
 Group:		Development/Libraries/Other
-Requires:	trinity-libcvsservice0 = %{?epoch:%{epoch}:}%{version}-%{release}
+Requires:	trinity-libcvsservice0 = %{EVRD}
 
 %description -n trinity-libcvsservice-devel
 The library libcvsservice provides a DCOP service for accessing and
@@ -889,8 +883,8 @@ Summary:	Subversion ioslave for Trinity
 Group:		Development/Languages/Other
 Requires:	subversion
 
-Obsoletes:	trinity-tdesdk-kio-plugins < %{?epoch:%{epoch}:}%{version}-%{release}
-Provides:	trinity-tdesdk-kio-plugins = %{?epoch:%{epoch}:}%{version}-%{release}
+Obsoletes:	trinity-tdesdk-kio-plugins < %{EVRD}
+Provides:	trinity-tdesdk-kio-plugins = %{EVRD}
 
 %description tdeio-plugins
 This package provides easy access to remote SVN repositories from within
@@ -953,8 +947,8 @@ fi
 Summary:	Unit testing library for Trinity
 Group:		Development/Languages/Other
 
-Obsoletes:	trinity-kunittest < %{?epoch:%{epoch}:}%{version}-%{release}
-Provides:	trinity-kunittest = %{?epoch:%{epoch}:}%{version}-%{release}
+Obsoletes:	trinity-kunittest < %{EVRD}
+Provides:	trinity-kunittest = %{EVRD}
 
 %description -n trinity-tdeunittest
 tdeunittest is a small library that facilitates the writing of tests for
@@ -980,17 +974,17 @@ This package is part of Trinity, and a component of the TDE SDK module.
 Summary:	Development files for %{name}
 Group:		Development/Libraries/Other
 
-Requires:	%{name} = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires:	trinity-kbabel-devel = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires:	%{name}-misc = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires:	trinity-kspy = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires:	trinity-kmtrace = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires:	trinity-tdeunittest = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires:	trinity-libcvsservice-devel = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires:	trinity-kompare = %{?epoch:%{epoch}:}%{version}-%{release}
+Requires:	%{name} = %{EVRD}
+Requires:	trinity-kbabel-devel = %{EVRD}
+Requires:	%{name}-misc = %{EVRD}
+Requires:	trinity-kspy = %{EVRD}
+Requires:	trinity-kmtrace = %{EVRD}
+Requires:	trinity-tdeunittest = %{EVRD}
+Requires:	trinity-libcvsservice-devel = %{EVRD}
+Requires:	trinity-kompare = %{EVRD}
 
-Obsoletes:	trinity-kdesdk-devel < %{?epoch:%{epoch}:}%{version}-%{release}
-Provides:	trinity-kdesdk-devel = %{?epoch:%{epoch}:}%{version}-%{release}
+Obsoletes:	trinity-kdesdk-devel < %{EVRD}
+Provides:	trinity-kdesdk-devel = %{EVRD}
 
 %description devel
 This package contains the development files for tdesdk.
