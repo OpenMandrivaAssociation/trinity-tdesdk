@@ -16,7 +16,7 @@
 %define _disable_rebuild_configure 1
 
 # fixes error: Empty %files file …/debugsourcefiles.list
-%define _debugsource_template %{nil}
+%undefine _debugsource_template
 
 %define tarball_name %{tde_pkg}-trinity
 
@@ -24,8 +24,8 @@
 Name:			trinity-%{tde_pkg}
 Summary:		The Trinity Software Development Kit (SDK)
 Group:			Development/Tools/Other
-Version:		14.1.5
-Release:		4
+Version:		14.1.6
+Release:		1
 URL:			http://www.trinitydesktop.org/
 
 License:		GPLv2+
@@ -42,13 +42,12 @@ BuildOption:    -DINCLUDE_INSTALL_DIR=%{tde_prefix}/include/tde
 BuildOption:    -DPKGCONFIG_INSTALL_DIR=%{tde_prefix}/%{_lib}/trinity/pkgconfig
 BuildOption:    -DSHARE_INSTALL_PREFIX=%{tde_prefix}/share
 BuildOption:    -DWITH_DBSEARCHENGINE=ON -DWITH_KCAL=ON -DBUILD_ALL=ON
-BuildOption:    -DBUILD_KIOSLAVE=%{!?with_kioslave:OFF}%{with_kioslave:ON}
+BuildOption:    -DBUILD_KIOSLAVE=%{!?with_kioslave:OFF}%{?with_kioslave:ON}
 BuildOption:    -DWITH_GCC_VISIBILITY=%{!?with_clang:ON}%{?with_clang:OFF}
 
 BuildRequires:	trinity-tdelibs-devel >= %{version}
 BuildRequires:	trinity-perl-dcop >= %{version}
 BuildRequires:	trinity-tdepim-devel >= %{version}
-
 BuildRequires:	trinity-tde-cmake >= %{version}
 
 %{!?with_clang:BuildRequires:	gcc-c++}
